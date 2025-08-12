@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="https://static.readdy.ai/static/e.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehicle Entry System - Autoveer</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#1E40AF',
+secondary: '#1E3A8A'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<style>
+:where([class^="ri-"])::before {
+content: "\f3c2";
+}
+.autoveer-logo {
+font-family: 'Arial Black', sans-serif;
+font-weight: 900;
+letter-spacing: -0.02em;
+}
+.gradient-bg {
+background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+.btn-in {
+background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+.btn-in:hover {
+background: linear-gradient(135deg, #059669 0%, #047857 100%);
+transform: translateY(-2px);
+box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+}
+.btn-out {
+background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+}
+.btn-out:hover {
+background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+transform: translateY(-2px);
+box-shadow: 0 15px 35px rgba(239, 68, 68, 0.4);
+}
+.modal-overlay {
+background: rgba(0, 0, 0, 0.7);
+backdrop-filter: blur(4px);
+}
+.modal-content {
+background: white;
+border-radius: 16px;
+box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+.fade-in {
+animation: fadeIn 0.3s ease-out;
+}
+.fade-out {
+animation: fadeOut 0.3s ease-out;
+}
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: scale(0.9);
+}
+to {
+opacity: 1;
+transform: scale(1);
+}
+}
+@keyframes fadeOut {
+from {
+opacity: 1;
+transform: scale(1);
+}
+to {
+opacity: 0;
+transform: scale(0.9);
+}
+}
+.close-btn {
+background: rgba(0, 0, 0, 0.1);
+border-radius: 50%;
+transition: all 0.2s ease;
+}
+.close-btn:hover {
+background: rgba(0, 0, 0, 0.2);
+transform: scale(1.1);
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+</head>
+<body class="gradient-bg min-h-screen flex flex-col items-center justify-center p-4">
+<div class="w-full max-w-2xl mx-auto text-center">
+<div class="mb-8 md:mb-12">
+<div class="autoveer-logo text-5xl md:text-8xl mb-6 md:mb-8">
+<span class="text-primary">AUTO</span><span class="text-gray-800">V</span><span class="text-primary">EER</span>
+</div>
+<h1 class="text-2xl md:text-4xl font-bold text-gray-800 mb-2">Vehicle Entry System</h1>
+<p class="text-base md:text-lg text-gray-600">Secure access control for authorized vehicles</p>
+</div>
+<div class="space-y-6 md:space-y-8">
+<button id="inBtn" class="btn-in w-full py-8 px-12 text-white text-3xl md:text-4xl font-bold !rounded-button transition-all duration-300 whitespace-nowrap">
+<div class="flex items-center justify-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center">
+<i class="ri-arrow-right-circle-fill ri-2x"></i>
+</div>
+VEHICLE IN
+</div>
+</button>
+<button id="outBtn" class="btn-out w-full py-8 px-12 text-white text-3xl md:text-4xl font-bold !rounded-button transition-all duration-300 whitespace-nowrap">
+<div class="flex items-center justify-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center">
+<i class="ri-arrow-left-circle-fill ri-2x"></i>
+</div>
+VEHICLE OUT
+</div>
+</button>
+</div>
+<div class="mt-12 text-sm text-gray-500">
+<p>For assistance, contact security at ext. 2024</p>
+</div>
+</div>
+<div id="modal" class="fixed inset-0 modal-overlay hidden z-50 flex items-center justify-center p-4">
+<div class="modal-content w-full max-w-4xl max-h-[90vh] relative">
+<button id="closeBtn" class="close-btn absolute -top-4 -right-4 w-12 h-12 flex items-center justify-center text-white text-2xl z-10">
+<i class="ri-close-line"></i>
+</button>
+<iframe id="modalFrame" class="w-full h-[80vh] rounded-2xl" frameborder="0"></iframe>
+</div>
+</div>
+<script id="modal-functionality">
+document.addEventListener('DOMContentLoaded', function() {
+const modal = document.getElementById('modal');
+const modalFrame = document.getElementById('modalFrame');
+const inBtn = document.getElementById('inBtn');
+const outBtn = document.getElementById('outBtn');
+const closeBtn = document.getElementById('closeBtn');
+const inFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeV_65IZFarB43W3j-8ISfGx4cjr7CU_QzVcWhwXuzLr9UCSw/viewform?usp=sharing&ouid=111946354783207240495';
+const outFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScuYkDf-I404q4AgOJ8_SiBJiiS-pkFbdwJ983kObFqHIhaeQ/viewform?usp=header';
+function openModal(url) {
+modalFrame.src = url;
+modal.classList.remove('hidden');
+modal.classList.add('fade-in');
+modal.classList.remove('fade-out');
+document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+modal.classList.add('fade-out');
+modal.classList.remove('fade-in');
+document.body.style.overflow = 'auto';
+setTimeout(() => {
+modal.classList.add('hidden');
+modalFrame.src = '';
+}, 300);
+}
+inBtn.addEventListener('click', () => openModal(inFormUrl));
+outBtn.addEventListener('click', () => openModal(outFormUrl));
+closeBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', function(e) {
+if (e.target === modal) {
+closeModal();
+}
+});
+document.addEventListener('keydown', function(e) {
+if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+closeModal();
+}
+});
+});
+</script>
+<script>
+    !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+    posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+        api_host: 'https://us.i.posthog.com',
+        autocapture: false,
+        capture_pageview: false,
+        capture_pageleave: false,
+        capture_performance: {
+            web_vitals: false,
+        },
+        rageclick: false,
+    })
+    window.shareKey = 'xtoSeTBWnhCB0Kh7gK1AoA';
+    window.host = 'readdy.ai';
+</script>
+<script src="https://static.readdy.ai/static/share.js"></script></body>
+</html>
