@@ -52,6 +52,7 @@ transform: translateY(-2px);
 box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
 }
 .btn-out {
+
 background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
 }
@@ -125,12 +126,10 @@ transform: scale(1.1);
 VEHICLE IN
 </div>
 </button>
-<button id="outBtn" class="btn-out w-full py-8 px-12 text-white text-3xl md:text-4xl font-bold !rounded-button transition-all duration-300 whitespace-nowrap">
+<button id="outBtn" class="btn-out w-full ">
 <div class="flex items-center justify-center gap-4">
-<div class="w-12 h-12 flex items-center justify-center">
-<i class="ri-arrow-left-circle-fill ri-2x"></i>
 </div>
-VEHICLE OUT
+
 </div>
 </button>
 </div>
@@ -153,7 +152,7 @@ const modalFrame = document.getElementById('modalFrame');
 const inBtn = document.getElementById('inBtn');
 const outBtn = document.getElementById('outBtn');
 const closeBtn = document.getElementById('closeBtn');
-const inFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeV_65IZFarB43W3j-8ISfGx4cjr7CU_QzVcWhwXuzLr9UCSw/viewform?usp=sharing&ouid=111946354783207240495';
+const inFormUrl = 'https://forms.office.com/r/nxnm0qJk34';
 const outFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScuYkDf-I404q4AgOJ8_SiBJiiS-pkFbdwJ983kObFqHIhaeQ/viewform?usp=header';
 function openModal(url) {
 modalFrame.src = url;
